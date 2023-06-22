@@ -4,6 +4,19 @@ import Moveable from "react-moveable";
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [containerLimits, setContainerLimits] = useState({});
+  
+  useEffect(() => {
+    function updateSize() {
+      setContainerLimits({
+        width:document.getElementById("parent").clientWidth,
+        height:document.getElementById("parent").clientHeight,
+      });
+    }
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
   const addMoveable = () => {
     // Create a new moveable component and add it to the array
@@ -69,6 +82,7 @@ const App = () => {
         {moveableComponents.map((item, index) => (
           <Component
             {...item}
+            containerLimits={containerLimits}
             key={index}
             updateMoveable={updateMoveable}
             handleResizeStart={handleResizeStart}
@@ -95,6 +109,7 @@ const Component = ({
   setSelected,
   isSelected = false,
   updateEnd,
+  containerLimits
 }) => {
   const ref = useRef();
 
@@ -203,7 +218,9 @@ const Component = ({
 
       <Moveable
         target={isSelected && ref.current}
+        bounds={{ left: 0, top: 0, bottom: containerLimits.height, right: containerLimits.width }}
         resizable
+        snappable={true}
         draggable
         onDrag={(e) => {
           updateMoveable(id, {
