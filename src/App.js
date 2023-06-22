@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import Moveable from "react-moveable";
+import { getImages } from "./services/getImages";
 
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
