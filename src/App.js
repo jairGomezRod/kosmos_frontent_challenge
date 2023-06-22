@@ -3,6 +3,7 @@ import Moveable from "react-moveable";
 
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
+  const [selectedToRemove, setselectedToRemove] = useState();
   const [selected, setSelected] = useState(null);
   const [containerLimits, setContainerLimits] = useState({});
   
@@ -46,9 +47,31 @@ const App = () => {
     setMoveableComponents(updatedMoveables);
   };
 
+  const removeMoveable = () => {
+    const updatedMoveables = moveableComponents.filter(
+      (moveable) => selectedToRemove != moveable.id
+    );
+    setMoveableComponents(updatedMoveables);
+  };
+
+  const handleChange = (e) => {
+    setselectedToRemove(e.target.value)
+  }
+
   return (
     <main style={{ height : "100vh", width: "100vw" }}>
       <button onClick={addMoveable}>Add Moveable1</button>
+      <div>
+        <label>
+          Delete Moveable:
+          <select name="selectMoveable" onChange={handleChange}>
+            {moveableComponents.map((item, index) => (
+              <option value={item.id} key={index}>{item.id} - {item.color}</option>
+            ))}
+          </select>
+        </label>
+        <button onClick={removeMoveable}>Delete</button>
+      </div>
       <div
         id="parent"
         style={{
@@ -110,7 +133,11 @@ const Component = ({
           background: color,
         }}
         onClick={() => setSelected(id)}
-      />
+      >
+        <div className="id_moveable">
+          {id}
+        </div>
+      </div>
 
       <Moveable
         target={isSelected && ref.current}
